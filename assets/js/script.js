@@ -1,11 +1,11 @@
 var taskIdCounter = 0;
 var formEl = document.querySelector("#task-form"); 
 var tasksToDoEl = document.querySelector("#tasks-to-do"); 
+// select main content:
+var pageContentEl = document.querySelector("#page-content");
 
 var taskFormHandler = function(event) { 
-  event.preventDefault();
-  
-
+    event.preventDefault();
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
     // check if input values are empty strings
@@ -93,4 +93,54 @@ var createTaskActions = function(taskId) {
     return actionContainerEl;
 };
 
+var taskButtonHandler = function(event) {
+
+    // get target element from event:
+    var targetEl = event.target;
+
+    // edit button was clicked
+    if(targetEl.matches(".edit-btn")){
+        var taskId = targetEl.getAttribute("data-task-id");
+        editTask(taskId);
+    }
+
+    // delete button was clicked
+    if (targetEl.matches(".delete-btn")) {
+        // get the element's task id
+        var taskId = targetEl.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+    
+};
+
+//edit function
+var editTask = function(taskId){
+
+    // get task list item element
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    // get content from task name and type and set to the form
+    var taskName = taskSelected.querySelector("h3.task-name").textContent;
+    document.querySelector("input[name='task-name']").value = taskName;
+
+    var taskType = taskSelected.querySelector("span.task-type").textContent;
+    document.querySelector("select[name='task-type']").value = taskType;
+
+    // change button name to save task
+    document.querySelector("#save-task").textContent = "Save Task";
+
+    formEl.setAttribute("data-task-id", taskId);
+}
+
+// delete function
+var deleteTask = function(taskId){
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    taskSelected.remove();
+}
+
 formEl.addEventListener("submit", taskFormHandler);
+
+
+// Clicking on main content triggers function: taskButtonHandler
+
+pageContentEl.addEventListener("click", taskButtonHandler);
