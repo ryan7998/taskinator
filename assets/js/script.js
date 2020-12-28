@@ -5,6 +5,7 @@ var tasksToDoEl = document.querySelector("#tasks-to-do");
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
 
+
 // select main content:
 var pageContentEl = document.querySelector("#page-content");
 
@@ -142,7 +143,7 @@ var createTaskActions = function(taskId) {
       
         // append to select
         statusSelectEl.appendChild(statusOptionEl);
-    }
+    }   
 
     actionContainerEl.appendChild(statusSelectEl);
     return actionContainerEl;
@@ -302,6 +303,46 @@ var saveTasks = function() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
+// load items from local storage
+var loadTasks = function() {
+    var savedTasks = localStorage.getItem("tasks");
+  
+    if (!savedTasks) {
+      return false;
+    }
+  
+    savedTasks = JSON.parse(savedTasks);
+
+    // loop through savedTasks array
+    for (var i = 0; i < savedTasks.length; i++) {
+        // pass each task object into the `createTaskEl()` function
+        createTaskEl(savedTasks[i]);
+        var taskId = savedTasks[i].id;
+        var statusValue = savedTasks[i].status;
+
+        // console.log(savedTasks[i]); return false;
+
+
+
+        // find the parent task item element based on the id
+        var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+        var taskItemSelected = taskSelected.querySelector(".select-status");
+        //taskItemSelected.value = "Completed";
+
+        if (statusValue === "to do") {
+            taskItemSelected.value = "To Do";
+            tasksToDoEl.appendChild(taskSelected);
+        } 
+        else if (statusValue === "in progress") {
+            taskItemSelected.value = "In Progress";
+            tasksInProgressEl.appendChild(taskSelected);
+        } 
+        else if (statusValue === "completed") {
+            taskItemSelected.value = "Completed";
+            tasksCompletedEl.appendChild(taskSelected);
+        }
+    }
+  }
 
 
 // EVENT LISTENERS:
@@ -326,3 +367,5 @@ pageContentEl.addEventListener("drop", dropTaskHandler);
 
 // Leaving drop zone event handler:
 pageContentEl.addEventListener("dragleave", dragLeaveHandler);
+
+loadTasks();
