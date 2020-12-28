@@ -59,6 +59,7 @@ var completeEditTask = function(taskName, taskType, taskId) {
             tasks[i].type = taskType;
         }
     };
+    saveTasks();    // save into local storage
 
     alert("Task Updated!");
     
@@ -92,6 +93,9 @@ var createTaskEl = function(taskDataObj) {
 
     //push the object into the array tasks[]
     tasks.push(taskDataObj);
+
+    // save tasks array in local storage
+    saveTasks();
 
     var taskActionEl = createTaskActions(taskIdCounter);
     listItemEl.appendChild(taskActionEl);
@@ -201,6 +205,8 @@ var deleteTask = function(taskId){
 
     // reassign tasks array to be the same as updatedTaskArr
     tasks = updatedTaskArr;
+
+    saveTasks(); // save inside local storage
 }
 
 // function trigerred when select items changed in tasks li
@@ -231,15 +237,13 @@ var taskStatusChangeHandler = function(event) {
             tasks[i].status = statusValue;
         }
     }
+    saveTasks(); // save into local storage;
 };
 
 // Drag task handler
 var dragTaskHandler = function(event){
     var taskId = event.target.getAttribute("data-task-id");
     event.dataTransfer.setData("text/plain", taskId);
-
-    // var getId = event.dataTransfer.getData("text/plain");
-    // console.log("getId:", getId, typeof getId);
 };
 
 // Drop zone Drag handler
@@ -282,6 +286,7 @@ var dropTaskHandler = function(event) {
             tasks[i].status = statusSelectEl.value.toLowerCase();
         }
     }
+    saveTasks(); // save task array inside local storage
 };
 
 // drop zone leave handler:
@@ -292,7 +297,14 @@ var dragLeaveHandler = function(event) {
     }
 }
 
+// save in local storage
+var saveTasks = function() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
+
+
+// EVENT LISTENERS:
 
 // Clicking on Submit Button
 formEl.addEventListener("submit", taskFormHandler);
